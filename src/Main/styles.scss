@@ -1,0 +1,27 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #3c3737;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+.title {
+    color: #ffffff;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.map {
+    flex: 1;
+    width: 100%;
+}
