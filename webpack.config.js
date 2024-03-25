@@ -15,11 +15,11 @@ module.exports = {
         directory: path.resolve(__dirname, 'dist')
     },
     port: 3000,
-    open: true,
     hot: true,
     compress: true,
     historyApiFallback: true,
   },
+  devtool: 'source-map',
   module: {
     // exclude node_modules
     rules: [
@@ -47,7 +47,7 @@ module.exports = {
               loader: 'css-loader',
               options: {
                 modules: {
-                  namedExport: true,
+                  namedExport: true, //important
                   localIdentName: '[path][name]__[local]', // Customize the generated class names
                 },
                 importLoaders: 2
@@ -59,12 +59,16 @@ module.exports = {
         { 
           test: /\.(ts|tsx)$/, 
           loader: "ts-loader" 
-        }
+        },
+        {
+          test: /\.(json|geojson)$/,
+          type: 'json'
+      },
     ],
   },
   // pass all js files through Babel
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.geojson'],
   },
   plugins: [
     new HtmlWebpackPlugin({

@@ -1,5 +1,29 @@
 {
-    "compilerOptions": {  
-      "jsx": "react-jsx",
-    }
+  "compilerOptions": {
+    "lib": ["es2017", "dom"],
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "strictFunctionTypes": false,
+    "outDir": "./lib",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildfile",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "importHelpers": true,
+    "noEmitHelpers": true,
+    "esModuleInterop": true,
+    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    "stripInternal": true,
+    "resolveJsonModule": true,
+  },
+  "include": ["./src"],
+  "exclude": ["**/__mocks__/*", "**/__tests__/**", "./src/__test-utilities__"]
 }
