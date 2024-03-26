@@ -1,13 +1,19 @@
 import * as styles from './styles.scss';
 import { useOpenLayers } from './hooks';
 import 'ol/ol.css';
+import BuildingInfoOverlay from './components/BuildingInfoOverlay';
+
+
 
 const Main = () => {
-  const mapRef = useOpenLayers()
+  const {mapRef, overlayRef, selectedBuildingInfo} = useOpenLayers()
   return (
       <div className={styles.container}>
           <div className={styles.title}>Shopping Malls in Singapore</div>
           <div ref={mapRef} className={styles.map}></div>
+          <div ref={overlayRef}>
+            {selectedBuildingInfo && <BuildingInfoOverlay information={selectedBuildingInfo}/>}
+          </div>
       </div>
   )
 }

@@ -1,21 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
-import { Vector, VectorTile } from 'ol/layer';
+import { Vector } from 'ol/layer';
 import apply from 'ol-mapbox-style';
 import VectorSource from 'ol/source/Vector.js'
 import GeoJSON from 'ol/format/GeoJSON.js';
 import shoppingMalls from './shoppingMalls.geojson'
-import VectorTileSource from 'ol/source/VectorTile.js';
-import MVT from 'ol/format/MVT.js';
-import { Collection, Feature } from 'ol';
+import { Feature, MapBrowserEvent, Overlay } from 'ol';
 import { Geometry, Point } from 'ol/geom';
 import { fromLonLat } from 'ol/proj';
+import { BuildingInfo } from './components/BuildingInfoOverlay';
+import { ObjectEvent } from 'openlayers';
+import { getBuildingImg } from './components/BuildingInfoOverlay/utils';
 
 
 export const useOpenLayers = () => {
-    const [olMap, setOlMap] = useState<Map>()
     const mapRef = useRef<HTMLDivElement>(null)
+    const overlayRef = useRef<HTMLDivElement>(null)
+    const [olMap, setOlMap] = useState<Map>();
+    const [selectedBuildingInfo, setSelectedBuildingInfo] = useState<BuildingInfo>()
     useEffect(() => {
         const map = new Map(
             {
@@ -26,19 +29,7 @@ export const useOpenLayers = () => {
               target: mapRef.current as HTMLElement,
             }
         )
-        map.on('click', e => {
-            const features = map.getFeaturesAtPixel(e.pixel)
-            console.log(features)
-        })
-        apply(map, 'https://api.maptiler.com/maps/10acd558-91af-43db-846f-44edd252befb/style.json?key=exzLn9YZ8tTAzRR3fhHZ').then(map => {
-            setOlMap(map as Map)
-        })
-        
-        return () => map.setTarget(undefined)
-    }, [])
-
-    useEffect(() => {
-        if (olMap) {
+        apply(map, 'https://api.maptiler.com/maps/10acd558-91af-43db-846f-44edd252befb/style.json?key=exzLn9YZ8tTAzRR3fhHZ').then((map: Map) => {
             const features: Feature<Geometry>[] = new GeoJSON().readFeatures(shoppingMalls)
             const parsedFeatures: Feature<Geometry>[] = []
             features.forEach((feature: Feature) => {
@@ -54,17 +45,51 @@ export const useOpenLayers = () => {
             })
             const featureVectorLayer = new Vector({
                 source: new VectorSource({
-                   features: parsedFeatures,
-                   format: new GeoJSON()
+                    features: parsedFeatures,
+                    format: new GeoJSON()
                 }),
                 visible: true,
-                zIndex: 2
+                zIndex: 10000
             })
-            olMap.addLayer(featureVectorLayer)
-            //On click of the map, get the features at that pixel, get access to the properties in the feature and open up overlay to display tooltip on Shopping mall's information
+            featureVectorLayer.set('title', 'shoppingMallsVectorLayer')
+            map.addLayer(featureVectorLayer)
+        })
+
+        
+
+        const overlay = new Overlay({
+            element: overlayRef.current as HTMLElement,
+            positioning: 'bottom-left',
+            id: 'building',
+            autoPan: true
+        })
+
+        map.addOverlay(overlay)
+
+        const onClickMapHandler = (event: MapBrowserEvent<any>) => {
+            overlay.setPosition(undefined)
+            setSelectedBuildingInfo(undefined)
+            map.forEachFeatureAtPixel(event.pixel, (feature) => {
+                const properties = feature.getProperties()
+                setSelectedBuildingInfo({
+                    name: properties["name"],
+                    address: properties["address"],
+                    floorArea: properties["floorArea"],
+                    imgUrl: getBuildingImg(properties["name"])
+                })
+                overlay.setPosition(event.coordinate)
+            }, {layerFilter: (layer) => layer.get('title') === 'shoppingMallsVectorLayer'})
         }
-    }, [olMap])
-    return mapRef
+
+        map.on('click', onClickMapHandler)
+
+        setOlMap(map)
+        
+        return () => map.setTarget(undefined)
+    }, [])
+
+    
+    return {mapRef, overlayRef, selectedBuildingInfo}
 }
 
 

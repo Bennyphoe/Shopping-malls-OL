@@ -1,70 +1,82 @@
 {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "coordinates": [
-            103.70624127116383,
-            1.3398070481942597
-          ],
-          "type": "Point"
-        }
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Jurong Point",
+        "address": "1 Jurong West Central 2, Singapore 648886",
+        "floorArea": 70000
       },
-      {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "coordinates": [
-            103.74355850000188,
-            1.333189499999449
-          ],
-          "type": "Point"
-        }
-      },
-      {
-        "type": "Feature",
-        "properties": {
-          "marker-color": "#f50000",
-          "marker-size": "medium",
-          "marker-symbol": "circle"
-        },
-        "geometry": {
-          "coordinates": [
-            103.87205822090482,
-            1.3506554517094713
-          ],
-          "type": "Point"
-        },
-        "id": 2
-      },
-      {
-        "type": "Feature",
-        "properties": {
-          "marker-color": "#ff0000",
-          "marker-size": "medium",
-          "marker-symbol": "circle"
-        },
-        "geometry": {
-          "coordinates": [
-            103.84499258465382,
-            1.3004228217822629
-          ],
-          "type": "Point"
-        },
-        "id": 3
-      },
-      {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "coordinates": [
-            103.82195900000164,
-            1.2642585951012677
-          ],
-          "type": "Point"
-        }
+      "geometry": {
+        "coordinates": [
+          103.70624127116383,
+          1.3398070481942597
+        ],
+        "type": "Point"
       }
-    ]
-  }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Jem",
+        "address": "50 Jurong Gateway Rd, Singapore 608549",
+        "floorArea": 76000
+      },
+      "geometry": {
+        "coordinates": [
+          103.74355850000188,
+          1.333189499999449
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Serangoon Nex",
+        "address": "Serangoon Central, 23, Singapore 556083",
+        "floorArea": 56000
+      },
+      "geometry": {
+        "coordinates": [
+          103.87205822090482,
+          1.3506554517094713
+        ],
+        "type": "Point"
+      },
+      "id": 2
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Plaza Singapura",
+        "address": "68 Orchard Rd, Singapore 238839",
+        "floorArea": 58400
+      },
+      "geometry": {
+        "coordinates": [
+          103.84499258465382,
+          1.3004228217822629
+        ],
+        "type": "Point"
+      },
+      "id": 3
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Vivo City",
+        "address": "1 HarbourFront Walk, Singapore 098585",
+        "floorArea": 99987
+      },
+      "geometry": {
+        "coordinates": [
+          103.82195900000164,
+          1.2642585951012677
+        ],
+        "type": "Point"
+      }
+    }
+  ]
+}
