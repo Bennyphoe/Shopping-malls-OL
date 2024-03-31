@@ -2,11 +2,26 @@ import * as styles from './styles.scss';
 import { useOpenLayers } from './hooks';
 import 'ol/ol.css';
 import BuildingInfoOverlay from './components/BuildingInfoOverlay';
+import { useEffect, useState } from 'react';
+import { useGetAddressQuery } from './queries/UseGetAddressQuery';
 
 
 
 const Main = () => {
-  const {mapRef, overlayRef, selectedBuildingInfo} = useOpenLayers()
+  const {mapRef, overlayRef, selectedBuildingInfo, olMap} = useOpenLayers()
+  const [searchOption, setSearchOption] = useState<string>()
+  const [appliedOption, setAppliedOption] = useState<string>("17 Dover Crescent")
+  const {data: addressInfo} = useGetAddressQuery(appliedOption)
+  useEffect(() => {
+    if (addressInfo) {
+      //CREATE A LAYER IN HOOK FIRST
+      //IF there is exisiting features, remove all of them first
+      //add it a new point feature with new styling into the layer
+      //Check for distance with tje features in shopping mall layer, if its within 5km, duplicate that feature
+      //Add those features into this layer
+      //make its zIndex higher than all other layer
+    }
+  }, [addressInfo])
   return (
       <div className={styles.container}>
           <div className={styles.title}>Shopping Malls in Singapore</div>

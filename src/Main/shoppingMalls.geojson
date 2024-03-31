@@ -6,7 +6,8 @@
       "properties": {
         "name": "Jurong Point",
         "address": "1 Jurong West Central 2, Singapore 648886",
-        "floorArea": 70000
+        "floorArea": 70000,
+        "websiteUrl": "https://www.jurongpoint.com.sg/"
       },
       "geometry": {
         "coordinates": [
@@ -21,7 +22,8 @@
       "properties": {
         "name": "Jem",
         "address": "50 Jurong Gateway Rd, Singapore 608549",
-        "floorArea": 76000
+        "floorArea": 76000,
+        "websiteUrl": "https://www.jem.sg/"
       },
       "geometry": {
         "coordinates": [
@@ -36,7 +38,8 @@
       "properties": {
         "name": "Serangoon Nex",
         "address": "Serangoon Central, 23, Singapore 556083",
-        "floorArea": 56000
+        "floorArea": 56000,
+        "websiteUrl": "https://www.nex.com.sg/"
       },
       "geometry": {
         "coordinates": [
@@ -52,7 +55,8 @@
       "properties": {
         "name": "Plaza Singapura",
         "address": "68 Orchard Rd, Singapore 238839",
-        "floorArea": 58400
+        "floorArea": 58400,
+        "websiteUrl": "https://www.capitaland.com/sg/malls/plazasingapura/en.html"
       },
       "geometry": {
         "coordinates": [
@@ -68,7 +72,8 @@
       "properties": {
         "name": "Vivo City",
         "address": "1 HarbourFront Walk, Singapore 098585",
-        "floorArea": 99987
+        "floorArea": 99987,
+        "websiteUrl": "https://www.vivocity.com.sg/"
       },
       "geometry": {
         "coordinates": [

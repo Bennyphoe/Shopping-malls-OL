@@ -6,6 +6,7 @@ export type BuildingInfo = {
     address: string;
     floorArea: number;
     imgUrl?: string;
+    websiteUrl?: string;
 }
 type BuildingInfoOverlayProps = {
     information: BuildingInfo
@@ -18,7 +19,9 @@ const BuildingInfoOverlay: FC<BuildingInfoOverlayProps> = ({information}) => {
                 <img src={information.imgUrl} alt="Building Image" className={styles.image}/>
             </div>
             <div className={styles.infoContainer}>
-                <div className={styles.buildingName}>{information.name}</div>
+                <a href={information.websiteUrl} className={styles.link} target="_blank">
+                    <div className={styles.buildingName}>{information.name}</div>
+                </a>
                 <div className={styles.label}>Address</div>
                 <div className={styles.value}>{information.address}</div>
                 <div className={styles.label}>Floor Area</div>

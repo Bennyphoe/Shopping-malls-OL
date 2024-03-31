@@ -10,8 +10,37 @@ import { Feature, MapBrowserEvent, Overlay } from 'ol';
 import { Geometry, Point } from 'ol/geom';
 import { fromLonLat } from 'ol/proj';
 import { BuildingInfo } from './components/BuildingInfoOverlay';
-import { ObjectEvent } from 'openlayers';
 import { getBuildingImg } from './components/BuildingInfoOverlay/utils';
+import Style from 'ol/style/Style.js';
+import { Circle, Fill, Stroke } from 'ol/style';
+import Select, { SelectEvent } from 'ol/interaction/Select.js';
+import { singleClick } from 'ol/events/condition';
+
+const defaultPointStyle = new Style({
+    image: new Circle({
+        fill: new Fill({
+            color: [189, 212, 233, 0.8]
+        }),
+        stroke: new Stroke({
+            color: [88, 108, 127, 0.8],
+            width: 3
+        }),
+        radius: 10
+    })
+})
+
+const selectedPointStyle = new Style({
+    image: new Circle({
+        fill: new Fill({
+            color: [146, 110, 225, 0.8]
+        }),
+        stroke: new Stroke({
+            color: [88, 108, 127, 0.8],
+            width: 3
+        }),
+        radius: 10
+    })
+})
 
 
 export const useOpenLayers = () => {
@@ -23,8 +52,9 @@ export const useOpenLayers = () => {
         const map = new Map(
             {
               view: new View({
-                  center: [0, 0],
+                  center: [11556337.77755491, 149346.65534895373],
                   zoom: 0,
+                  extent: [11520145.202444727, 130545.25583954992, 11591281.477661451, 169115.7839731198]
               }),
               target: mapRef.current as HTMLElement,
             }
@@ -49,7 +79,8 @@ export const useOpenLayers = () => {
                     format: new GeoJSON()
                 }),
                 visible: true,
-                zIndex: 10000
+                zIndex: 10000,
+                style: defaultPointStyle
             })
             featureVectorLayer.set('title', 'shoppingMallsVectorLayer')
             map.addLayer(featureVectorLayer)
@@ -61,7 +92,8 @@ export const useOpenLayers = () => {
             element: overlayRef.current as HTMLElement,
             positioning: 'bottom-left',
             id: 'building',
-            autoPan: true
+            autoPan: true,
+            offset: [12, 0]
         })
 
         map.addOverlay(overlay)
@@ -75,7 +107,8 @@ export const useOpenLayers = () => {
                     name: properties["name"],
                     address: properties["address"],
                     floorArea: properties["floorArea"],
-                    imgUrl: getBuildingImg(properties["name"])
+                    imgUrl: getBuildingImg(properties["name"]),
+                    websiteUrl: properties["websiteUrl"]
                 })
                 overlay.setPosition(event.coordinate)
             }, {layerFilter: (layer) => layer.get('title') === 'shoppingMallsVectorLayer'})
@@ -83,13 +116,35 @@ export const useOpenLayers = () => {
 
         map.on('click', onClickMapHandler)
 
+
+        //Select feature interaction
+        const selectInteraction = new Select({
+            condition: singleClick,
+            layers: (layer) => {
+                return layer.get('title') === 'shoppingMallsVectorLayer'
+            },
+            style: selectedPointStyle
+        })
+        map.addInteraction(selectInteraction)
+
+        // selectInteraction.on('select', (e: SelectEvent) => {
+        //     if (e.selected.length > 0) {
+        //         const selectedFeature = e.selected[0]
+        //         if (selectedFeature.getGeometry()?.getType() === 'Point') {
+        //             selectedFeature.setStyle(selectedPointStyle)
+        //         }
+               
+        //     }
+           
+        // })
+
         setOlMap(map)
         
         return () => map.setTarget(undefined)
     }, [])
 
     
-    return {mapRef, overlayRef, selectedBuildingInfo}
+    return {mapRef, overlayRef, selectedBuildingInfo, olMap}
 }
 
 

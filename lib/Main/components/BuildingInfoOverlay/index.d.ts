@@ -4,6 +4,7 @@ export type BuildingInfo = {
     address: string;
     floorArea: number;
     imgUrl?: string;
+    websiteUrl?: string;
 };
 type BuildingInfoOverlayProps = {
     information: BuildingInfo;

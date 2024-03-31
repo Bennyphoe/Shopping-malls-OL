@@ -10,4 +10,5 @@ export declare const image: string;
 export declare const imageContainer: string;
 export declare const infoContainer: string;
 export declare const label: string;
+export declare const link: string;
 export declare const value: string;
