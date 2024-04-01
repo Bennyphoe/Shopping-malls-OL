@@ -5,5 +5,6 @@ export declare const useOpenLayers: () => {
     overlayRef: import("react").RefObject<HTMLDivElement>;
     selectedBuildingInfo: BuildingInfo | undefined;
     olMap: Map | undefined;
+    mallAddresses: string[];
 };
 //# sourceMappingURL=hooks.d.ts.map

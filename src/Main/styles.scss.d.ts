@@ -5,5 +5,10 @@
 // tslint:disable
 
 export declare const container: string;
+export declare const header: string;
 export declare const map: string;
+export declare const searchButton: string;
+export declare const searchContainer: string;
+export declare const searchInput: string;
+export declare const searchLabel: string;
 export declare const title: string;

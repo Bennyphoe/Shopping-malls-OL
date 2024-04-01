@@ -4,27 +4,65 @@ import 'ol/ol.css';
 import BuildingInfoOverlay from './components/BuildingInfoOverlay';
 import { useEffect, useState } from 'react';
 import { useGetAddressQuery } from './queries/UseGetAddressQuery';
+import { Vector } from 'ol/source';
+import { Feature } from 'ol';
+import { LineString, Point } from 'ol/geom';
+import { fromLonLat } from 'ol/proj';
+import { useGetDistanceBetweenAddressQuery } from './queries/UseGetProximityQuery';
+import { generateLineStringsFromOrigin } from './utils';
 
 
 
 const Main = () => {
-  const {mapRef, overlayRef, selectedBuildingInfo, olMap} = useOpenLayers()
-  const [searchOption, setSearchOption] = useState<string>()
-  const [appliedOption, setAppliedOption] = useState<string>("17 Dover Crescent")
+  const {mapRef, overlayRef, selectedBuildingInfo, olMap, mallAddresses: destinations} = useOpenLayers()
+  const [searchOption, setSearchOption] = useState<string>("")
+  const [appliedOption, setAppliedOption] = useState<string>("")
   const {data: addressInfo} = useGetAddressQuery(appliedOption)
+  const {data: featureDistances} = useGetDistanceBetweenAddressQuery(appliedOption, destinations)
   useEffect(() => {
-    if (addressInfo) {
-      //CREATE A LAYER IN HOOK FIRST
-      //IF there is exisiting features, remove all of them first
-      //add it a new point feature with new styling into the layer
-      //Check for distance with tje features in shopping mall layer, if its within 5km, duplicate that feature
-      //Add those features into this layer
-      //make its zIndex higher than all other layer
+    if (addressInfo && olMap) {
+      const searchLayer = olMap?.getAllLayers().filter(layer => layer.get('title') === 'searchVectorLayer')[0]
+      const vectorSource = searchLayer?.getSource()
+      if (vectorSource && vectorSource instanceof Vector) {
+        const currentFeatures = vectorSource.getFeatures()
+        if (currentFeatures.length > 0) {
+          //remove all features first
+          vectorSource.removeFeatures(currentFeatures)
+        }
+        const newPointFeature = new Feature({
+          geometry: new Point(fromLonLat([addressInfo.long, addressInfo.lat])),
+        })
+        // newPointFeature.setId("origin")
+        vectorSource.addFeature(newPointFeature)
+        
+        //Create line string between the origin and the destinations
+        generateLineStringsFromOrigin(olMap, fromLonLat([addressInfo.long, addressInfo.lat]))
+
+        //ON hover display the duration and distance 
+        //Using featureDistances, can set properties on the linestring generated above, maybe set it
+        //in the generateLineStringFromOrigin function
+        //Add the map hover interaction in hooks, on hover, filter by searchVectorLayer, get the feature
+        //that is a lineString, set overlay at event coordinate with duration and distance 
+        
+
+      }
     }
-  }, [addressInfo])
+  }, [addressInfo, olMap])
   return (
       <div className={styles.container}>
-          <div className={styles.title}>Shopping Malls in Singapore</div>
+          <div className={styles.header}>
+            <div className={styles.title}>Shopping Malls in Singapore</div>
+            <div className={styles.searchContainer}>
+              <span className={styles.searchLabel}>Search Address: </span>
+              <input className={styles.searchInput} type='text' placeholder='Enter an address...' value={searchOption} onChange={(e) => setSearchOption(e.target.value)}></input>
+              <button className={styles.searchButton} onClick={() => {
+                if (searchOption) {
+                  setAppliedOption(searchOption)
+                }
+              }}>Search</button>
+            </div>
+            
+          </div>
           <div ref={mapRef} className={styles.map}></div>
           <div ref={overlayRef}>
             {selectedBuildingInfo && <BuildingInfoOverlay information={selectedBuildingInfo}/>}

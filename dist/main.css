@@ -1,4 +1,4 @@
-*{box-sizing:border-box;padding:0;margin:0}.src-Main-styles__container{width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;padding:1rem;gap:1rem}.src-Main-styles__title{color:#000;text-align:center;font-size:1.2rem}.src-Main-styles__map{flex:1;width:100%}
+*{box-sizing:border-box;padding:0;margin:0}.src-Main-styles__container{width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;padding:1rem;gap:1rem}.src-Main-styles__header{width:100%;position:relative}.src-Main-styles__title{color:#000;text-align:center;font-size:1.2rem}.src-Main-styles__search-container{position:absolute;right:0;top:0}.src-Main-styles__search-label{color:#000;font-size:1rem}.src-Main-styles__search-input{padding:.1rem;margin-right:.2rem;width:250px}.src-Main-styles__search-button{padding:.1rem .2rem;background-color:rgba(157,176,200,.8);border:2px solid rgba(99,146,202,.8);border-radius:2px}.src-Main-styles__map{flex:1;width:100%}
 :root,
 :host {
   --ol-background-color: white;

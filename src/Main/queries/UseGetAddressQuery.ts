@@ -6,12 +6,12 @@ type AddressInfo = {
   lat: number;
 }
 
-export const useGetAddressQuery = (address: string) => {
+export const useGetAddressQuery = (address?: string) => {
   return useQuery({
     queryKey: ["address", address],
     queryFn: async() => {
       try {
-        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${process.env.GOOGLE_API_KEY}`)
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address!)}&key=${process.env.GOOGLE_API_KEY}`)
         const responseData = await response.json()
         const data = responseData.results[0]
         const addressInfo: AddressInfo = {
@@ -23,6 +23,8 @@ export const useGetAddressQuery = (address: string) => {
       } catch (error) {
         throw new Error()
       } 
-    }
+    },
+    enabled: Boolean(address),
+    staleTime: 10 * 60 * 1000
   })
 }

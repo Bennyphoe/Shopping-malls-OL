@@ -13,7 +13,7 @@ import { BuildingInfo } from './components/BuildingInfoOverlay';
 import { getBuildingImg } from './components/BuildingInfoOverlay/utils';
 import Style from 'ol/style/Style.js';
 import { Circle, Fill, Stroke } from 'ol/style';
-import Select, { SelectEvent } from 'ol/interaction/Select.js';
+import Select from 'ol/interaction/Select.js';
 import { singleClick } from 'ol/events/condition';
 
 const defaultPointStyle = new Style({
@@ -43,10 +43,29 @@ const selectedPointStyle = new Style({
 })
 
 
+const searchPointStyle = new Style({
+    image: new Circle({
+      fill: new Fill({
+        color: [231, 148, 171, 0.8]
+      }),
+      stroke: new Stroke({
+        color: [232, 46, 99, 0.8],
+        width: 3
+      }),
+      radius: 10
+    }),
+    stroke: new Stroke({
+        color: [111, 153, 255, 0.55],
+        width: 2,
+    }),
+  })
+
+
 export const useOpenLayers = () => {
     const mapRef = useRef<HTMLDivElement>(null)
     const overlayRef = useRef<HTMLDivElement>(null)
     const [olMap, setOlMap] = useState<Map>();
+    const [mallAddresses, setMallAddresses] = useState<string[]>([])
     const [selectedBuildingInfo, setSelectedBuildingInfo] = useState<BuildingInfo>()
     useEffect(() => {
         const map = new Map(
@@ -62,6 +81,7 @@ export const useOpenLayers = () => {
         apply(map, 'https://api.maptiler.com/maps/10acd558-91af-43db-846f-44edd252befb/style.json?key=exzLn9YZ8tTAzRR3fhHZ').then((map: Map) => {
             const features: Feature<Geometry>[] = new GeoJSON().readFeatures(shoppingMalls)
             const parsedFeatures: Feature<Geometry>[] = []
+            const address: string[] = []
             features.forEach((feature: Feature) => {
                 const geometry = feature.getGeometry()
                 if (geometry instanceof Point) {
@@ -70,9 +90,11 @@ export const useOpenLayers = () => {
                         ...feature.getProperties(),
                         geometry: new Point(projectedCoordinates),
                     })
+                    address.push(feature.get('address'))
                     parsedFeatures.push(updatedFeature)
                 }
             })
+            setMallAddresses(address)
             const featureVectorLayer = new Vector({
                 source: new VectorSource({
                     features: parsedFeatures,
@@ -138,13 +160,24 @@ export const useOpenLayers = () => {
            
         // })
 
+        //Create a layer for user input address
+        const searchVectorLayer = new Vector({
+            source: new VectorSource({
+                features: [],
+            }),
+            zIndex: 100001,
+            style: searchPointStyle
+        })
+        searchVectorLayer.set('title', 'searchVectorLayer')
+        map.addLayer(searchVectorLayer)
+
         setOlMap(map)
         
         return () => map.setTarget(undefined)
     }, [])
 
     
-    return {mapRef, overlayRef, selectedBuildingInfo, olMap}
+    return {mapRef, overlayRef, selectedBuildingInfo, olMap, mallAddresses}
 }
 
 
