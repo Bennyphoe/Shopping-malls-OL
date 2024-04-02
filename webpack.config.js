@@ -50,8 +50,15 @@ module.exports = {
                 modules: {
                   namedExport: true, //important
                   localIdentName: '[path][name]__[local]', // Customize the generated class names
+                }
+              },
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: [require('autoprefixer')],
                 },
-                importLoaders: 2
               },
             },
             'sass-loader', // Compiles Sass to CSS
@@ -69,7 +76,7 @@ module.exports = {
   },
   // pass all js files through Babel
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.geojson'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   plugins: [
     new HtmlWebpackPlugin({

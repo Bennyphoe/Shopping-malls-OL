@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/Main/components/DistanceMatrixOverlay/index.tsx"],"names":[],"mappings":"AAAA,OAAO,EAAE,EAAE,EAAE,MAAM,OAAO,CAAC;AAG3B,MAAM,MAAM,0BAA0B,GAAG;IACvC,QAAQ,EAAE,MAAM,CAAC;IACjB,QAAQ,EAAE,MAAM,CAAC;CAClB,CAAA;AAED,QAAA,MAAM,qBAAqB,EAAE,EAAE,CAAC,0BAA0B,CAOzD,CAAA;AAED,eAAe,qBAAqB,CAAA"}

@@ -351,5 +351,6 @@
 }
 
 .src-Main-components-BuildingInfoOverlay-styles__container{width:400px;display:grid;grid-template-columns:40% minmax(0, 1fr);font-size:15px;border-radius:10px;align-content:center;padding:12px;overflow:hidden;background-color:#212029}.src-Main-components-BuildingInfoOverlay-styles__info-container{padding-left:1rem}.src-Main-components-BuildingInfoOverlay-styles__link{text-decoration:none}.src-Main-components-BuildingInfoOverlay-styles__building-name{font-size:1.2rem;text-align:center;color:#fff;margin-bottom:1rem}.src-Main-components-BuildingInfoOverlay-styles__label{color:#a4a5b3;font-size:1rem;margin-bottom:.3rem}.src-Main-components-BuildingInfoOverlay-styles__value{color:#fff;font-size:1.2rem;margin-bottom:.5rem}.src-Main-components-BuildingInfoOverlay-styles__image-container{padding:1rem;position:relative}.src-Main-components-BuildingInfoOverlay-styles__image{display:block;position:absolute;top:0;left:0;width:100%;height:100%}
+.src-Main-components-DistanceMatrixOverlay-styles__container{background-color:rgba(8,20,50,.55)}.src-Main-components-DistanceMatrixOverlay-styles__matrixValue{color:rgba(8,20,50,.15)}
 
 /*# sourceMappingURL=main.css.map*/

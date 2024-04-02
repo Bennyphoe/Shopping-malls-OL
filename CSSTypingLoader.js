@@ -12,7 +12,7 @@ module.exports = function (content, ...args) {
   let classNameResults = [];
   let declaration = '';
   let matchResult = null;
-
+  console.log(resourcePath)
   while ((matchResult = matchClassNames.exec(content)) !== null) {
     classNameResults.push(matchResult[1]);
   }

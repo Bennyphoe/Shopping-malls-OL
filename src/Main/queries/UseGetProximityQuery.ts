@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-type DistanceResult = Record<string, {distance: string, duration: string}>
+export type DistanceResult = Record<string, {distance: string, duration: string}>
 
 type Element = {
   distance: {

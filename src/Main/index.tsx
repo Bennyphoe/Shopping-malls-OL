@@ -6,48 +6,39 @@ import { useEffect, useState } from 'react';
 import { useGetAddressQuery } from './queries/UseGetAddressQuery';
 import { Vector } from 'ol/source';
 import { Feature } from 'ol';
-import { LineString, Point } from 'ol/geom';
+import { Point } from 'ol/geom';
 import { fromLonLat } from 'ol/proj';
 import { useGetDistanceBetweenAddressQuery } from './queries/UseGetProximityQuery';
 import { generateLineStringsFromOrigin } from './utils';
+import DistanceMatrixOverlay from './components/DistanceMatrixOverlay';
 
 
 
 const Main = () => {
-  const {mapRef, overlayRef, selectedBuildingInfo, olMap, mallAddresses: destinations} = useOpenLayers()
+  const {mapRef, overlayRef, distanceRef, selectedBuildingInfo, olMap, mallAddresses: destinations, hoverDistanceInfo} = useOpenLayers()
   const [searchOption, setSearchOption] = useState<string>("")
   const [appliedOption, setAppliedOption] = useState<string>("")
   const {data: addressInfo} = useGetAddressQuery(appliedOption)
   const {data: featureDistances} = useGetDistanceBetweenAddressQuery(appliedOption, destinations)
   useEffect(() => {
-    if (addressInfo && olMap) {
+    if (olMap) {
       const searchLayer = olMap?.getAllLayers().filter(layer => layer.get('title') === 'searchVectorLayer')[0]
-      const vectorSource = searchLayer?.getSource()
+      const vectorSource = searchLayer.getSource()
       if (vectorSource && vectorSource instanceof Vector) {
-        const currentFeatures = vectorSource.getFeatures()
-        if (currentFeatures.length > 0) {
-          //remove all features first
-          vectorSource.removeFeatures(currentFeatures)
+        vectorSource.clear()
+        if (addressInfo && featureDistances) {
+          const newPointFeature = new Feature({
+            geometry: new Point(fromLonLat([addressInfo.long, addressInfo.lat])),
+          })
+          vectorSource.addFeature(newPointFeature)
+          
+          //Create line string between the origin and the destinations
+          generateLineStringsFromOrigin(olMap, fromLonLat([addressInfo.long, addressInfo.lat]), featureDistances)
+
         }
-        const newPointFeature = new Feature({
-          geometry: new Point(fromLonLat([addressInfo.long, addressInfo.lat])),
-        })
-        // newPointFeature.setId("origin")
-        vectorSource.addFeature(newPointFeature)
-        
-        //Create line string between the origin and the destinations
-        generateLineStringsFromOrigin(olMap, fromLonLat([addressInfo.long, addressInfo.lat]))
-
-        //ON hover display the duration and distance 
-        //Using featureDistances, can set properties on the linestring generated above, maybe set it
-        //in the generateLineStringFromOrigin function
-        //Add the map hover interaction in hooks, on hover, filter by searchVectorLayer, get the feature
-        //that is a lineString, set overlay at event coordinate with duration and distance 
-        
-
       }
     }
-  }, [addressInfo, olMap])
+  }, [addressInfo, olMap, featureDistances])
   return (
       <div className={styles.container}>
           <div className={styles.header}>
@@ -56,9 +47,7 @@ const Main = () => {
               <span className={styles.searchLabel}>Search Address: </span>
               <input className={styles.searchInput} type='text' placeholder='Enter an address...' value={searchOption} onChange={(e) => setSearchOption(e.target.value)}></input>
               <button className={styles.searchButton} onClick={() => {
-                if (searchOption) {
-                  setAppliedOption(searchOption)
-                }
+                setAppliedOption(searchOption)
               }}>Search</button>
             </div>
             
@@ -66,6 +55,9 @@ const Main = () => {
           <div ref={mapRef} className={styles.map}></div>
           <div ref={overlayRef}>
             {selectedBuildingInfo && <BuildingInfoOverlay information={selectedBuildingInfo}/>}
+          </div>
+          <div ref={distanceRef}>
+            <DistanceMatrixOverlay distance={hoverDistanceInfo?.distance || "-"} duration={hoverDistanceInfo?.duration || "-"}/>
           </div>
       </div>
   )

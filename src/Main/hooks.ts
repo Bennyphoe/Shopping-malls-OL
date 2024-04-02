@@ -7,27 +7,38 @@ import VectorSource from 'ol/source/Vector.js'
 import GeoJSON from 'ol/format/GeoJSON.js';
 import shoppingMalls from './shoppingMalls.geojson'
 import { Feature, MapBrowserEvent, Overlay } from 'ol';
-import { Geometry, Point } from 'ol/geom';
+import { Geometry, LineString, Point } from 'ol/geom';
 import { fromLonLat } from 'ol/proj';
 import { BuildingInfo } from './components/BuildingInfoOverlay';
 import { getBuildingImg } from './components/BuildingInfoOverlay/utils';
-import Style from 'ol/style/Style.js';
-import { Circle, Fill, Stroke } from 'ol/style';
-import Select from 'ol/interaction/Select.js';
-import { singleClick } from 'ol/events/condition';
+import Style, { StyleFunction } from 'ol/style/Style.js';
+import { Circle, Fill, Stroke, Text } from 'ol/style';
+import Select, { SelectEvent } from 'ol/interaction/Select.js';
+import { pointerMove, singleClick } from 'ol/events/condition';
+import { DistanceMatrixOverlayProps } from './components/DistanceMatrixOverlay';
 
-const defaultPointStyle = new Style({
-    image: new Circle({
-        fill: new Fill({
-            color: [189, 212, 233, 0.8]
+const getDefaultPointStyle: StyleFunction = (feature: Feature)=> {
+    return new Style({
+        image: new Circle({
+            fill: new Fill({
+                color: [189, 212, 233, 0.8]
+            }),
+            stroke: new Stroke({
+                color: [88, 108, 127, 0.8],
+                width: 3
+            }),
+            radius: 10
         }),
-        stroke: new Stroke({
-            color: [88, 108, 127, 0.8],
-            width: 3
-        }),
-        radius: 10
+        text: new Text({
+            text: feature.get('name'),
+            font: '12px Arial',
+            fill: new Fill({
+                color: [189, 212, 233, 0.8]
+            }),
+            offsetY: -20
+        })
     })
-})
+}
 
 const selectedPointStyle = new Style({
     image: new Circle({
@@ -64,9 +75,11 @@ const searchPointStyle = new Style({
 export const useOpenLayers = () => {
     const mapRef = useRef<HTMLDivElement>(null)
     const overlayRef = useRef<HTMLDivElement>(null)
+    const distanceRef = useRef<HTMLDivElement>(null)
     const [olMap, setOlMap] = useState<Map>();
     const [mallAddresses, setMallAddresses] = useState<string[]>([])
     const [selectedBuildingInfo, setSelectedBuildingInfo] = useState<BuildingInfo>()
+    const [hoverDistanceInfo, setHoverDistanceInfo] = useState<DistanceMatrixOverlayProps>()
     useEffect(() => {
         const map = new Map(
             {
@@ -90,6 +103,7 @@ export const useOpenLayers = () => {
                         ...feature.getProperties(),
                         geometry: new Point(projectedCoordinates),
                     })
+                    updatedFeature.setStyle(getDefaultPointStyle)
                     address.push(feature.get('address'))
                     parsedFeatures.push(updatedFeature)
                 }
@@ -102,7 +116,6 @@ export const useOpenLayers = () => {
                 }),
                 visible: true,
                 zIndex: 10000,
-                style: defaultPointStyle
             })
             featureVectorLayer.set('title', 'shoppingMallsVectorLayer')
             map.addLayer(featureVectorLayer)
@@ -110,7 +123,7 @@ export const useOpenLayers = () => {
 
         
 
-        const overlay = new Overlay({
+        const buildingInfoOverlay = new Overlay({
             element: overlayRef.current as HTMLElement,
             positioning: 'bottom-left',
             id: 'building',
@@ -118,10 +131,10 @@ export const useOpenLayers = () => {
             offset: [12, 0]
         })
 
-        map.addOverlay(overlay)
+        map.addOverlay(buildingInfoOverlay)
 
         const onClickMapHandler = (event: MapBrowserEvent<any>) => {
-            overlay.setPosition(undefined)
+            buildingInfoOverlay.setPosition(undefined)
             setSelectedBuildingInfo(undefined)
             map.forEachFeatureAtPixel(event.pixel, (feature) => {
                 const properties = feature.getProperties()
@@ -132,7 +145,7 @@ export const useOpenLayers = () => {
                     imgUrl: getBuildingImg(properties["name"]),
                     websiteUrl: properties["websiteUrl"]
                 })
-                overlay.setPosition(event.coordinate)
+                buildingInfoOverlay.setPosition(event.coordinate)
             }, {layerFilter: (layer) => layer.get('title') === 'shoppingMallsVectorLayer'})
         }
 
@@ -149,17 +162,7 @@ export const useOpenLayers = () => {
         })
         map.addInteraction(selectInteraction)
 
-        // selectInteraction.on('select', (e: SelectEvent) => {
-        //     if (e.selected.length > 0) {
-        //         const selectedFeature = e.selected[0]
-        //         if (selectedFeature.getGeometry()?.getType() === 'Point') {
-        //             selectedFeature.setStyle(selectedPointStyle)
-        //         }
-               
-        //     }
-           
-        // })
-
+       
         //Create a layer for user input address
         const searchVectorLayer = new Vector({
             source: new VectorSource({
@@ -171,13 +174,49 @@ export const useOpenLayers = () => {
         searchVectorLayer.set('title', 'searchVectorLayer')
         map.addLayer(searchVectorLayer)
 
+        //overlay for distance matrix
+        const distanceOverlay = new Overlay({
+            element: distanceRef.current as HTMLElement,
+            positioning: 'top-left',
+            id: 'distance',
+            autoPan: true,
+            offset: [12, 0]
+        })
+
+        map.addOverlay(distanceOverlay)
+
+        //Add hover using Select interaction
+        const hoverInteraction = new Select({
+            condition: pointerMove,
+            layers: (layer) => layer.get('title') === "searchVectorLayer",
+            filter: (feature) => feature.getGeometry() instanceof LineString, 
+            hitTolerance: 2
+        })
+
+        hoverInteraction.on("select", (event: SelectEvent) => {
+            distanceOverlay.setPosition(undefined)
+            setHoverDistanceInfo(undefined)
+            if (event.selected.length > 0 && event.selected[0].getGeometry() instanceof LineString) {
+                const coordinate = event.mapBrowserEvent.coordinate
+                const featureSelected = event.selected[0]
+                setHoverDistanceInfo({
+                    distance: featureSelected.get("distance"),
+                    duration: featureSelected.get("duration")
+                })
+                distanceOverlay.setPosition(coordinate)
+            }
+        })
+
+        map.addInteraction(hoverInteraction)
+
+
         setOlMap(map)
         
         return () => map.setTarget(undefined)
     }, [])
 
     
-    return {mapRef, overlayRef, selectedBuildingInfo, olMap, mallAddresses}
+    return {mapRef, overlayRef, distanceRef, selectedBuildingInfo, olMap, mallAddresses, hoverDistanceInfo}
 }
 
 

@@ -1,1 +1,1 @@
-{"version":3,"file":"UseGetProximityQuery.d.ts","sourceRoot":"","sources":["../../../src/Main/queries/UseGetProximityQuery.ts"],"names":[],"mappings":"AAEA,eAAO,MAAM,iCAAiC,WAAY,MAAM,gBAAgB,MAAM,EAAE,4EAiBvF,CAAA"}
+{"version":3,"file":"UseGetProximityQuery.d.ts","sourceRoot":"","sources":["../../../src/Main/queries/UseGetProximityQuery.ts"],"names":[],"mappings":"AAEA,MAAM,MAAM,cAAc,GAAG,MAAM,CAAC,MAAM,EAAE;IAAC,QAAQ,EAAE,MAAM,CAAC;IAAC,QAAQ,EAAE,MAAM,CAAA;CAAC,CAAC,CAAA;AAajF,eAAO,MAAM,iCAAiC,WAAY,MAAM,gBAAgB,MAAM,EAAE,sFAwBvF,CAAA"}
